@@ -2,6 +2,7 @@ player_cards = []
 dealer_cards = []
 player_value = 0
 dealer_value = 0
+choice = ''
 
 # Generate a random card (returns card)
 def random_card
@@ -87,36 +88,61 @@ def card_total array
   total
 end
 
+# Dealer sequence for total dealer cards & value
+def dealer_sequence d_cards, p_cards
+  deal_dealer d_cards, p_cards
+  value = card_total d_cards
+    while value <= 21
+      if value < 17
+	      deal_dealer d_cards, p_cards
+        value = card_total d_cards
+  	  else
+  		  return value
+  	  end
+    end
+	return value	
+end
 
+deal_dealer dealer_cards, player_cards
+dealer_value = card_total dealer_cards
+2.times do
+deal_player player_cards, dealer_cards
+end
+player_value = card_total player_cards
 
-# Generate 1 dealer card **(random_card + dealt_check) + add to dealer_cards array**
-# Generate dealer total **iterate over dealer_cards array (with Ace check)**
-# Generate 2 player cards **(random_card + dealt_check) + add to player_cards array**
-# Generate player total **iterate over player_cards array (with Ace check)**
-#   If player blackjack, do dealer card sequence
-# Player input: [H]it or [S]tay
-#   If 'Hit', generate 1 player card
-#   Generate player total (with 'Ace check')
-#     If 'bust' dealer wins
-#     Else player input (loop till 'stay' or 'bust')
-#   If 'Stay', do dealer card sequence
-#   Else 'Please enter [H]it or [S]tay
-# Dealer card sequence:
-# Generate 1 dealer card
-# Generate dealer total (with 'Ace check')
-#   If dealer blackjack, compare totals
-#   If dealer total < 17 generate 1 dealer card (loop)
-#   If dealer total >= 17 stay
-# Compare totals
-#   If player total > dealer total, player wins
-#   If dealer total > player total, dealer wins
-#   If player total = dealer total, tie 
+puts 'Welcome to Ruby Blackjack!'
+puts 'Dealer is showing ' + dealer_cards.to_s + ' Total => ' + dealer_value.to_s
 
-# Generate random card
-# Check if card was dealt
-# If already dealt, generate a new card
-# If not already dealt 
-#  (1) add card to dealt array, 
-#  (2) calculate card value
-#  (3) add card value to player or dealer
+while (player_value < 21) && (choice.downcase != 's')
+  puts 'You have ' + player_cards.to_s + ' Total => ' + player_value.to_s
+  puts 'Would you like to [H]it or [S]tay?'
+  choice = gets.chomp
+    if choice.downcase == 'h'
+  	  deal_player player_cards, dealer_cards
+  		player_value = card_total player_cards
+ 		elsif choice.downcase == 's'
+		  player_value = player_value
+		else
+ 		  puts 'Please enter [H] for Hit or [S] for stay'
+ 		end  
+end
+
+dealer_value = dealer_sequence dealer_cards, player_cards
+if player_value > 21 
+  puts 'You have ' + player_cards.to_s + ' Total => ' + player_value.to_s + ' - BUSTED! You lose!'
+elsif player_value == dealer_value
+  puts 'You have ' + player_cards.to_s + ' Total => ' + player_value.to_s
+  puts 'Dealer has ' + dealer_cards.to_s + ' Total => ' + dealer_value.to_s + ' - TIE! Try again!'
+elsif (player_value == 21) && (player_cards.length == 2)
+  puts 'You have ' + player_cards.to_s + ' Total => ' + player_value.to_s + ' - BLACKJACK! You win!'
+elsif dealer_value > 21
+  puts 'You have ' + player_cards.to_s + ' Total => ' + player_value.to_s
+  puts 'Dealer has ' + dealer_cards.to_s + ' Total => ' + dealer_value.to_s + ' - DEALER BUSTED! You win!'
+elsif player_value > dealer_value
+  puts 'You have ' + player_cards.to_s + ' Total => ' + player_value.to_s
+  puts 'Dealer has ' + dealer_cards.to_s + ' Total => ' + dealer_value.to_s + ' - YOU WIN! Yay!'
+else
+  puts 'You have ' + player_cards.to_s + ' Total => ' + player_value.to_s
+  puts 'Dealer has ' + dealer_cards.to_s + ' Total => ' + dealer_value.to_s + ' - YOU LOSE! Sorry!'
+end
 
