@@ -5,6 +5,9 @@ def hourly block_description, &block
     if current_time > 12
       current_time = current_time - 12
     end
+    if current_time == 0
+      current_time = 12
+    end
   current_time.times do
     block.call
   end
